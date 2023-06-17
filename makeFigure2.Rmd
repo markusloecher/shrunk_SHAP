@@ -1,0 +1,45 @@
+---
+title: "Figure 2"
+author: "Loecher"
+date: "2023-06-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Initial setup
+
+```{r}
+source("src/StroblData_ASTA2022.R")
+source("src/makeFigures_functions.R")
+source("src/treewise_shap_simulation.R")
+source("src/sim_utils.R")
+```
+
+
+Run simulation:
+
+```{r, results='hide', message=FALSE}
+set.seed(20)
+n=240
+res_list = simulation_in_oob(n=n,M=1,relevance=0.25)
+shap_vals_oob <- res_list[[1]]
+shap_vals_in <- res_list[[2]]
+```
+
+```{r}
+plotinOutCorrs(shap_vals_in, shap_vals_oob, plotIt="ggplot", cols2plot=1:5, nc=3)
+```
+## Create Figure 2
+
+```{r}
+#fname=paste0("figures/inOutCorrs_x15_r025_n_",n, Sys.Date(),".pdf")
+fname=paste0("figures/inOutCorrs_x15_r025_n_",n,".pdf")
+ggsave(fname, height=4, width=6)
+#system(paste("cp ", fname, fname2))
+fname=paste0("data/inOutCorrs_x15_r025_n_",n,".rda")
+save(res_list, file = fname)
+```
+

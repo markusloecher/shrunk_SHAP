@@ -1,0 +1,122 @@
+---
+title: "Figure 3"
+author: "Loecher"
+date: "2023-06-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Initial setup
+
+```{r}
+Fig_NullSim = TRUE
+Fig_PowerSim = TRUE
+Fig_Power_Null_Sim = TRUE
+xLabels = expression(x[1], x[2], x[3], x[4], x[5]) # TeX(paste0("x_{",1:5,"}"))
+
+source("src/StroblData_ASTA2022.R")
+source("src/makeFigures_functions.R")
+source("src/sim_utils.R")
+source("src/treewise_shap_simulation.R")
+
+rerun = TRUE
+addSims = FALSE
+#M is number of replication
+n=400;M=100
+#load(file.path(dataDir2, paste0("in_out_n",n,".rda")), verbose = T)
+#save(in_out, file = file.path(dataDir2, paste0("in_out_n",n,".rda")))
+rdaFile = paste0("data/in_out_n",n,".rda")
+```
+
+### train-test simulations
+
+```{r, eval=FALSE}
+library(future.apply)
+plan(multisession) ## Run in parallel on local computer
+r = c(0, 0.15, 0.25)
+res <- future_lapply(r, FUN = SHAPcorrs ,n=n, M=M, future.seed = TRUE)
+```
+
+
+```{r runSims, eval=rerun | addSims }
+set.seed(20)
+in_out_new=list()
+r=0.15;cat("r=", r, "\n")
+in_out_new[[as.character(r)]] = SHAPcorrs(r,n=n, M=M)
+
+r=0.25;cat("r=", r, "\n")
+in_out_new[[as.character(r)]] = SHAPcorrs(r,n=n, M=M)
+
+r=0;cat("r=", r, "\n")
+in_out_new[[as.character(r)]] = SHAPcorrs(r,n=n, M=M)
+
+if (addSims) {
+  rdaFile_new = paste0("data/in_out_new_n",n,".rda")
+  save(in_out_new, file = rdaFile)
+  load(rdaFile)
+  in_out = AppendSims(in_out, in_out_new)
+} else {
+  in_out = in_out_new
+}
+save(in_out, file = rdaFile)
+```
+
+```{r}
+# 2-column versions:
+plotShrunkSHAP(in_out)
+```
+
+### inbag-oob simulations
+
+
+```{r, eval=FALSE}
+for (i in 1:length(in_out)){
+  print(names(in_out[[i]]))
+#dim()
+}
+```
+
+```{r, results='hide', message = FALSE}
+#quick test
+res = simulation_in_oob(relevance = 0.15, n = 100, M = 10,  ntree = 5)
+#res = simulation_in_oob(relevance = 0.15, n = n, M = M,  ntree = 500)
+
+```
+
+
+```{r, results='hide', message = FALSE}
+library(future.apply)
+plan(multisession) ## Run in parallel on local computer
+r = c(0, 0.15, 0.25)
+#toy run:
+#res <- future_lapply(r, FUN = simulation_in_oob ,n=100, M=5, ntree=10, future.seed = TRUE)
+res <- future_lapply(r, FUN = simulation_in_oob ,n=400, M=100, ntree=500, future.seed = TRUE)
+names(res) = r
+save(res, file = "data/in_oob_n400.rda")
+closeAllConnections()
+```
+
+`plotShrunkSHAP()` (to be precise it is `in_out_long()` under the hood) expects the following named slots in the list:
+`SHAPimp`, `SHAPimp_shrunk` and `SHAPimp_shrunk_oob` so we have to add the latter (they should all have dimensions $M \times 5$):
+
+```{r}
+#add SHAPimp_shrunk_oob
+for (r in c(0, 0.15, 0.25)){
+  shap_avs_out_hat = res[[as.character(r)]]$shap_avs_in * res[[as.character(r)]]$slopes
+  #shap_avs_out_hat = res[[as.character(r)]]$shap_avs_oob * res[[as.character(r)]]$slopes
+  in_out[[as.character(r)]]$SHAPimp_shrunk_oob = shap_avs_out_hat
+}
+plotShrunkSHAP(in_out,rVals = c(0,0.15,0.25))
+```
+
+## Create Figure 3
+
+```{r}
+fname="figures/ShrunkSHAP_3cols.pdf"
+plotShrunkSHAP(in_out,rVals = c(0,0.15,0.25))
+ggsave(fname, height=5, width=6)
+```
+

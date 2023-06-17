@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>readme</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="README_files/libs/clipboard/clipboard.min.js"></script>
+<script src="README_files/libs/quarto-html/quarto.js"></script>
+<script src="README_files/libs/quarto-html/popper.min.js"></script>
+<script src="README_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="README_files/libs/quarto-html/anchor.min.js"></script>
+<link href="README_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="README_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="README_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="README_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="README_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="debiasing-shap-scores-in-random-forests" class="level1">
+<h1>Debiasing SHAP scores in random forests</h1>
+<p>This repository provides code to reproduce results in the paper “Debiasing SHAP scores in random forests” by Markus Loecher (2023)</p>
+<p>The folder structure is as follows:</p>
+<ul>
+<li>The actual code to run simulations and the functions to create figures are all in the <code>src</code> folder.</li>
+<li>The resulting pdfs are in the <code>figures</code> folder.</li>
+<li>Some (most) simulations take a long time to run, so we have saved the data outputs from those runs in the <code>data</code> folder.</li>
+<li>Figures from the paper:
+<ul>
+<li>We do not include source code for Figures 1 and Figure 6, since these are legacy figures from the work leading to this <a href="https://kdd.isti.cnr.it/xkdd2022/papers/XKDD_2022_paper_1418.pdf">paper</a> and were created prior to this research.</li>
+<li>There are dedicated Rmd files to create Figures 2 and 3. The figures in the Appendix are created by <code>makeFigs_Appendix.R</code></li>
+</ul></li>
+<li>Table 1: We imported the AUC scores for <em>SHAP</em>, <em>MDA</em>, <em>MDI</em> from a <a href="https://link.springer.com/chapter/10.1007/978-3-031-14463-9_8">previous paper</a> and only recreated the entry for <span class="math inline">\(\widehat{\text{SHAP}}^{shrunk}_{in}\)</span>. The relevant files for this are <code>AUC_run_simulations.R</code> and <code>src/AUC_simulations_functions.R</code>. (Again, these simulations take a long time to run, so we have saved the data for your convenience)</li>
+</ul>
+<p>I should note the following: this code base is more complex than strictly necessary as a result of having evolved over the years by contributions from various students both at the Bachelor and Master level. Roughly speaking, there are four spearate parts, all of which led to the final insights in the paper:</p>
+<ul>
+<li>The initial research ideas were tested in python (sklearn) where we successfully separated out-of-bag from inbag data for trees/forests.</li>
+<li>Inspired by the need for more control on the features and attributes of trees, we then developed <a href="https://github.com/Heity94/AugmentedHierarchicalShrinkage/tree/main/TreeModelsFromScratch">our own random forest library</a> (still in python) which we used to create Figures 4 and 5.</li>
+<li>In order to replicate our results in different settings, we eventually switched from the original <a href="https://github.com/slundberg/shap">shap module</a> to <a href="https://github.com/ModelOriented/treeshap">treeshap</a> in *R**. Most of the initial functions are found in the files <code>StroblData_ASTA2022.R</code> and <code>helperFuns.R</code>. However, those functions work only for the train/test methodology.</li>
+<li>The actual separation of out-of-bag from inbag data for trees/forests was achieved in a separate effort and can be found in the files <code>treewise_shap_simulation.R</code> and <code>sim_utils.R</code>.</li>
+</ul>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
