@@ -6,9 +6,9 @@ library(foreach)
 library(doParallel)
 library(ranger)
 
-N=1000
+N=2000
 p=50
-ntree=400
+ntree=500
 
 Nsims =  100
 ncores = 8
@@ -41,7 +41,7 @@ if (seriousRun){
   print(Sys.time()-t)
 } else {
   #single run:
-  res = NoisyFeatureSim(N=500, p=50, ntree=100)
+  res = NoisyFeatureSim(N=50, p=50, ntree=10)
 }
 closeAllConnections()
 save(parSims, file = paste0("AUCsims_",Sys.Date(),".rda"))

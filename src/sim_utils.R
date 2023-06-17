@@ -180,13 +180,24 @@ slopes_generation_M <- function(shap_vals_in,shap_vals_oob,M = 1){
   return(slopes)
 }
 
-slopes_generation <- function(shap_vals_in,shap_vals_oob){
+slopes_generation <- function(shap_vals_in,
+                  shap_vals_oob,
+                  retSmooth = FALSE){
   n = nrow(shap_vals_in)
   p = ncol(shap_vals_oob)
   slopes = rep(0, p)
+  if (retSmooth) shap_vals_oob_smooth=shap_vals_oob#silly initialization
+  
   for (j in 1:p){
     fit = lm(shap_vals_oob[,j] ~ shap_vals_in[,j]-1)
     slopes[j] = as.numeric(fit$coefficients)
+    if (is.na(slopes[j])) {
+      #browser()
+      slopes[j] = 1
+    }
+    #cat("j=", j, sum(is.na(shap_vals_in[,j])), sum(is.na(shap_vals_oob[,j])), "\n")
+    if (retSmooth) shap_vals_oob_smooth[,j] = slopes[j]*shap_vals_in[,j]
   }
+  if (retSmooth) return(shap_vals_oob_smooth)
   return(slopes)
 }

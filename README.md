@@ -15,7 +15,7 @@ The folder structure is as follows:
 * Table 1: We imported the AUC scores for *SHAP*, SHAP$_{oob}$, *MDA*, *MDI* from a [previous paper](https://link.springer.com/chapter/10.1007/978-3-031-14463-9_8) and only recreated the entry for $\widehat{\text{SHAP}}^{shrunk}_{in}$. The relevant files for this are `AUC_run_simulations.R` and `src/AUC_simulations_functions.R`. (Again, these simulations take a long time to run, so we have saved the data for your convenience)
 
 
-I should note the following: this code base is more complex than strictly necessary as a result of having evolved over the years by contributions from various students both at the Bachelor and Master level. Roughly speaking, there are four spearate parts, all of which led to the final insights in the paper:
+I should note the following: this code base is more complex than strictly necessary as a result of having evolved over the years by contributions from various students both at the Bachelor and Master level. Roughly speaking, there are four separate parts, all of which led to the final insights in the paper:
 
 - The initial research ideas were tested in python (sklearn) where we successfully separated out-of-bag from inbag data for trees/forests.
 - Inspired by the need for more control on the features and attributes of trees, we then developed [our own random forest library](https://github.com/Heity94/AugmentedHierarchicalShrinkage/tree/main/TreeModelsFromScratch) (still in python) which we used to create Figures 4 and 5.
