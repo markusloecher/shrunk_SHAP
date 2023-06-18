@@ -11,7 +11,7 @@ The folder structure is as follows:
 * Figures from the paper:
     - We do not include source code for Figures 1 and Figure 6, since these are legacy figures from the work leading to this [paper](https://kdd.isti.cnr.it/xkdd2022/papers/XKDD_2022_paper_1418.pdf) and were created prior to this research.
     - There are dedicated Rmd files to create Figures 2 and 3. The figures in the Appendix are created by `makeFigs_Appendix.R`.
-    - Figures 4 and 5 were created by python code. 
+    - Figures 4 and 5 were created by python code and requite installing the python module `TreeModelsFromScratch`, directions for which can be found on the [original github page](https://github.com/Heity94/AugmentedHierarchicalShrinkage). 
 * Table 1: We imported the AUC scores for *SHAP*, SHAP<sub>*o**o**b*</sub>, *MDA*, *MDI* from a [previous paper](https://link.springer.com/chapter/10.1007/978-3-031-14463-9_8) and only recreated the entry for $\widehat{\text{SHAP}}^{shrunk}_{in}$. The relevant files for this are `AUC_run_simulations.R` and `src/AUC_simulations_functions.R`. (Again, these simulations take a long time to run, so we have saved the data for your convenience)
 
 
